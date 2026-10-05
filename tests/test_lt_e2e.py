@@ -1,6 +1,7 @@
 import pytest
 from faker import Faker
 from playwright.sync_api import Page,expect
+from utils.api_helpers import get_real_user_from_api
 from pages.lt_home_page import LTHomePage
 from pages.lt_search_page import LTSearchPage
 from pages.lt_register_page import LTRegisterPage
@@ -15,6 +16,7 @@ fake = Faker()
     ])
 
 def test_e2e_register_and_add_to_cart(page:Page,search_keyword,target_product):
+    api_fname, api_lname, api_email = get_real_user_from_api()
     register_page = LTRegisterPage(page)
     home_page = LTHomePage(page)
     search_page = LTSearchPage(page)
@@ -22,7 +24,18 @@ def test_e2e_register_and_add_to_cart(page:Page,search_keyword,target_product):
     checkout_page = LTCheckoutPage(page)
 
     register_page.navigate()
-    register_page.fill_registration_form()
+    
+    fake_password = fake.password(length=10)
+    fake_phone = ''.join(filter(str.isdigit,fake.phone_number()))[:10]
+    
+    register_page.fill_registration_form(
+        fname=api_fname, 
+        lname=api_lname, 
+        email=api_email, 
+        phone=fake_phone, 
+        password=fake_password
+    )
+    
     expect(page).to_have_title("Your Account Has Been Created!")
 
     home_page.navigate()
@@ -41,8 +54,8 @@ def test_e2e_register_and_add_to_cart(page:Page,search_keyword,target_product):
 
     expect(page).to_have_title("Checkout")
     checkout_page.fill_billing_details(
-        fname=fake.first_name(),
-        lname=fake.last_name(),
+        fname=api_fname,
+        lname=api_lname,
         address=fake.street_address(),
         city=fake.city(),
         postcode=fake.postalcode()

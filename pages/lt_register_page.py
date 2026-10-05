@@ -1,10 +1,8 @@
 import os
-from faker import Faker
 
 class LTRegisterPage:
     def __init__(self,page):
         self.page = page
-        self.fake = Faker()
         self.url = f"{os.getenv('LT_URL').strip()}index.php?route=account/register"
 
         self.first_name = self.page.get_by_placeholder("First Name")
@@ -20,18 +18,14 @@ class LTRegisterPage:
     def navigate(self):
         self.page.goto(self.url)
 
-    def fill_registration_form(self):
-        fake_password = self.fake.password(length=10)
-
-        self.first_name.fill(self.fake.first_name())
-        self.last_name.fill(self.fake.last_name())
-        self.email.fill(self.fake.email())
-
-        fake_phone = ''.join(filter(str.isdigit, self.fake.phone_number()))[:10]
-        self.telephone.fill(fake_phone)
-
-        self.password.fill(fake_password)
-        self.confirm_password.fill(fake_password)
+    def fill_registration_form(self, fname, lname, email, phone, password):
+        self.first_name.fill(fname)
+        self.last_name.fill(lname)
+        self.email.fill(email)
+        self.telephone.fill(phone)
+        
+        self.password.fill(password)
+        self.confirm_password.fill(password)
 
         self.agree_checkbox.click()
         self.continue_btn.click()
