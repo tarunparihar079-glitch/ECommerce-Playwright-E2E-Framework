@@ -2,6 +2,7 @@ import requests
 import json
 import random
 import os
+import time
 
 def get_real_user_from_api():
     user_id = random.randint(1,10)
@@ -18,6 +19,9 @@ def get_real_user_from_api():
     first_name = parsed_json['data']['first_name']
     last_name = parsed_json['data']['last_name']
     email_id = parsed_json['data']['email']
+
+    timestamp = int(time.time())
+    email_id = f"{timestamp}_{email_id}"
 
     print(f"[INFO] User data retrieved: {first_name} {last_name}, {email_id}")
 

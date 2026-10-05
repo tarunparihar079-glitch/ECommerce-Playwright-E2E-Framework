@@ -29,6 +29,7 @@ jobs:
       run: pytest --html=report.html
       env:
         LT_URL: ${{ secrets.LT_URL }}
+        REQRES_API_URL: ${{ secrets.REQRES_API_URL }}
 
     - name: 6. Upload Test Report Artifact
       uses: actions/upload-artifact@v4
